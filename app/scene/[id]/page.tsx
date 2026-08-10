@@ -1,5 +1,6 @@
 'use client';
 
+import { use } from 'react';
 import { storyData } from '@/lib/scenes';
 import { LandingScene } from '@/components/Scene/LandingScene';
 import { SceneWrapper } from '@/components/Scene/SceneWrapper';
@@ -8,14 +9,18 @@ import { SceneNav } from '@/components/Navigation/SceneNav';
 import { notFound } from 'next/navigation';
 
 interface ScenePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function ScenePage({ params }: ScenePageProps) {
+  // Unwrap params safely using React.use() for 'use client' components
+  const resolvedParams = use(params);
+  const id = resolvedParams.id;
+
   // Handle landing scene separately
-  if (params.id === 'landing') {
+  if (id === 'landing') {
     return (
       <>
         <LandingScene />
@@ -30,13 +35,13 @@ export default function ScenePage({ params }: ScenePageProps) {
     );
   }
 
-  const scene = storyData.scenes.find((s) => s.id === params.id);
+  const scene = storyData.scenes.find((s) => s.id === id);
 
   if (!scene) {
     notFound();
   }
 
-  const currentIndex = storyData.scenes.findIndex((s) => s.id === params.id);
+  const currentIndex = storyData.scenes.findIndex((s) => s.id === id);
   const nextScene = currentIndex < storyData.scenes.length - 1 ? storyData.scenes[currentIndex + 1] : null;
   const prevScene = currentIndex > 0 ? storyData.scenes[currentIndex - 1] : null;
 
