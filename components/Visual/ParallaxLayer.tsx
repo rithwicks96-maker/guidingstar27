@@ -66,7 +66,7 @@ export function ParallaxLayer({
 
   return (
     <motion.div
-      className="relative w-full aspect-[9/16] overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950"
+  className="relative w-full aspect-[9/16] min-h-[400px] overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
