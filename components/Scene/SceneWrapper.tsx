@@ -102,12 +102,11 @@ export function SceneWrapper({ scene, priority = false }: SceneWrapperProps) {
 
       {/* Illustration with Parallax */}
     <div className="w-full md:w-1/2 flex-shrink-0 order-first md:order-none">
-  <ParallaxLayer
-    src={scene.illustrationPath}
-    alt={scene.illustrationAlt}
-    parallaxConfig={scene.parallaxConfig}
-    priority={priority}
-  />
+ <img
+  src={scene.illustrationPath}
+  alt={scene.illustrationAlt}
+  className="w-full h-auto object-cover"
+/>
 </div>
 
       {/* Text Content */}
