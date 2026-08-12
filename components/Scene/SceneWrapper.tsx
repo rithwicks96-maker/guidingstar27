@@ -101,19 +101,14 @@ export function SceneWrapper({ scene, priority = false }: SceneWrapperProps) {
       )}
 
       {/* Illustration with Parallax */}
-      <motion.div
-        className="w-full md:w-1/2 flex-shrink-0 order-first md:order-none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <ParallaxLayer
-          src={scene.illustrationPath}
-          alt={scene.illustrationAlt}
-          parallaxConfig={scene.parallaxConfig}
-          priority={priority}
-        />
-      </motion.div>
+    <div className="w-full md:w-1/2 flex-shrink-0 order-first md:order-none">
+  <ParallaxLayer
+    src={scene.illustrationPath}
+    alt={scene.illustrationAlt}
+    parallaxConfig={scene.parallaxConfig}
+    priority={priority}
+  />
+</div>
 
       {/* Text Content */}
       <motion.div
