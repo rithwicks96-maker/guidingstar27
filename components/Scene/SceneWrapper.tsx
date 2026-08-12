@@ -61,7 +61,7 @@ export function SceneWrapper({ scene, priority = false }: SceneWrapperProps) {
 
   return (
     <motion.div
-      className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex flex-col md:flex-row relative"
+      className="relative w-full min-h-screen overflow-hidden bg-slate-950"
       initial={chosenTransition.initial}
       animate={chosenTransition.animate}
       exit={chosenTransition.exit}
@@ -101,7 +101,7 @@ export function SceneWrapper({ scene, priority = false }: SceneWrapperProps) {
       )}
 
       {/* Illustration with Parallax */}
-    <div className="w-full md:w-1/2 flex-shrink-0 order-first md:order-none">
+      <div className="absolute inset-0 z-0">
  <img
   src={scene.illustrationPath}
   alt={scene.illustrationAlt}
@@ -111,7 +111,7 @@ export function SceneWrapper({ scene, priority = false }: SceneWrapperProps) {
 
       {/* Text Content */}
       <motion.div
-        className="w-full md:w-1/2 flex flex-col justify-start py-8 md:py-12 overflow-y-auto max-h-[90vh]"
+        className="relative z-20 w-full min-h-screen flex flex-col justify-end py-10 px-6 md:px-12 lg:px-20 overflow-y-auto"
         animate={{ opacity: showContent ? 1 : 0 }}
         transition={{ duration: 0.4 }}
       >
