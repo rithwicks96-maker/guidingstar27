@@ -125,7 +125,7 @@ export function GuideStar({
         {/* Star SVG */}
         <svg width="60" height="60" viewBox="0 0 60 60" className="drop-shadow-lg">
           <defs>
-            <filter id="starGlow">
+           <filter id="starGlowGuidingStar">
               <feGaussianBlur stdDeviation="2" result="coloredBlur" />
               <feMerge>
                 <feMergeNode in="coloredBlur" />
@@ -136,7 +136,7 @@ export function GuideStar({
           <polygon
             points="30,5 37,23 56,23 41,34 47,52 30,41 13,52 19,34 4,23 23,23"
             fill="#d4af37"
-            filter="url(#starGlow)"
+            filter="url(#starGlowGuidingStar)"
             opacity={opacity}
           />
         </svg>
