@@ -104,9 +104,8 @@ export function LandingScene() {
           </div>
         </motion.div>
 
-        {/* Opening Text */}
-        <motion.div
-          className="space-y-6"
+       {/* Opening Text */}
+<div className="space-y-6">
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.8 }}
@@ -122,7 +121,7 @@ export function LandingScene() {
           <p className="text-base text-gray-300 font-light">
             Follow the guiding star through four years of your journey.
           </p>
-        </motion.div>
+       </div>
 
         {/* Begin Journey Button */}
         <motion.div
