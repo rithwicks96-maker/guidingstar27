@@ -106,10 +106,6 @@ export function LandingScene() {
 
        {/* Opening Text */}
 <div className="space-y-6">
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-        >
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-white leading-tight">
             The Guiding Star
           </h1>
