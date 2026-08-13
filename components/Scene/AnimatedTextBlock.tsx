@@ -34,7 +34,7 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
     }
   };
 
-  const transitionConfig = {
+  const transitionConfig: any = {
     duration: animationType === 'none' ? 0 : duration,
     delay: baseDelay,
     ease: 'easeOut',
