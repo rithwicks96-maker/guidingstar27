@@ -9,14 +9,13 @@ interface GuideStarProps {
   position?: { x: number; y: number };
   scale?: number;
   opacity?: number;
-  particleIntensity?: number;
   duration?: number;
   show?: boolean;
 }
 
 export function GuideStar({
   effect = 'glow',
-  position = { x: 50, y: 50 },
+  position = { x: 50, y: 15 },
   scale = 1,
   opacity = 1,
   duration = 4,
@@ -26,11 +25,11 @@ export function GuideStar({
 
   const starVariants: Variants = {
     glow: {
-      scale: [scale, scale * 1.15, scale],
+      scale: [scale, scale * 1.1, scale],
       opacity: [opacity * 0.8, opacity, opacity * 0.8],
       filter: [
         'drop-shadow(0 0 8px rgba(253, 224, 71, 0.6))',
-        'drop-shadow(0 0 20px rgba(253, 224, 71, 0.95))',
+        'drop-shadow(0 0 16px rgba(253, 224, 71, 0.9))',
         'drop-shadow(0 0 8px rgba(253, 224, 71, 0.6))',
       ],
       transition: {
@@ -40,12 +39,12 @@ export function GuideStar({
       },
     },
     pulse: {
-      scale: [scale * 0.9, scale * 1.2, scale * 0.9],
+      scale: [scale * 0.9, scale * 1.15, scale * 0.9],
       opacity: [opacity * 0.7, opacity, opacity * 0.7],
       filter: [
-        'drop-shadow(0 0 12px rgba(251, 191, 36, 0.7))',
-        'drop-shadow(0 0 24px rgba(251, 191, 36, 1))',
-        'drop-shadow(0 0 12px rgba(251, 191, 36, 0.7))',
+        'drop-shadow(0 0 10px rgba(251, 191, 36, 0.7))',
+        'drop-shadow(0 0 20px rgba(251, 191, 36, 1))',
+        'drop-shadow(0 0 10px rgba(251, 191, 36, 0.7))',
       ],
       transition: {
         duration: duration * 0.75,
@@ -54,12 +53,12 @@ export function GuideStar({
       },
     },
     breathing: {
-      scale: [scale * 0.95, scale * 1.1, scale * 0.95],
-      opacity: [opacity * 0.6, opacity * 0.9, opacity * 0.6],
+      scale: [scale * 0.95, scale * 1.05, scale * 0.95],
+      opacity: [opacity * 0.7, opacity * 0.95, opacity * 0.7],
       filter: [
-        'drop-shadow(0 0 10px rgba(253, 224, 71, 0.5))',
-        'drop-shadow(0 0 18px rgba(253, 224, 71, 0.8))',
-        'drop-shadow(0 0 10px rgba(253, 224, 71, 0.5))',
+        'drop-shadow(0 0 8px rgba(253, 224, 71, 0.5))',
+        'drop-shadow(0 0 14px rgba(253, 224, 71, 0.8))',
+        'drop-shadow(0 0 8px rgba(253, 224, 71, 0.5))',
       ],
       transition: {
         duration: duration * 1.2,
@@ -78,13 +77,13 @@ export function GuideStar({
     none: {
       scale,
       opacity,
-      filter: 'drop-shadow(0 0 10px rgba(253, 224, 71, 0.7))',
+      filter: 'drop-shadow(0 0 8px rgba(253, 224, 71, 0.7))',
     },
   };
 
   return (
     <div
-      className="absolute z-30 pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
+      className="absolute z-30 pointer-events-none -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out"
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
@@ -93,12 +92,12 @@ export function GuideStar({
       <motion.div
         variants={starVariants}
         animate={effect}
-        initial={{ scale: 0, opacity: 0 }}
+        initial={{ scale: 1, opacity: 1 }}
         className="relative flex items-center justify-center"
       >
         <svg
-          width={40 * scale}
-          height={40 * scale}
+          width={36 * scale}
+          height={36 * scale}
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
