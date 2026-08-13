@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { TextBlock } from '@/types';
 
 interface AnimatedTextBlockProps {
@@ -8,31 +9,29 @@ interface AnimatedTextBlockProps {
 }
 
 export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
-  const delayMs = block.delay || index * 100;
+  const baseDelay = (block.delay || index * 100) / 1000;
 
   if (block.type === 'title') {
     return (
-      <h2
-        className="text-2xl md:text-3xl font-serif font-bold mt-6 mb-4 text-amber-100 relative z-20 transition-all duration-700 ease-out"
-        style={{
-          animation: `fadeInText 0.8s ease-out ${delayMs}ms forwards`,
-          opacity: 0,
-        }}
+      <motion.h2
+        className="text-2xl md:text-3xl font-serif font-bold mt-6 mb-4 text-amber-100 relative z-20"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: baseDelay }}
       >
         {block.content}
-      </h2>
+      </motion.h2>
     );
   }
 
   return (
-    <p
-      className="text-base md:text-xl leading-relaxed font-light text-gray-100 relative z-20 my-3 transition-all duration-700 ease-out"
-      style={{
-        animation: `fadeInText 0.8s ease-out ${delayMs}ms forwards`,
-        opacity: 0,
-      }}
+    <motion.p
+      className="text-base md:text-xl leading-relaxed font-light text-gray-100 relative z-20 my-3"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: baseDelay }}
     >
       {block.content}
-    </p>
+    </motion.p>
   );
 }
