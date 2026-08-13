@@ -1,89 +1,60 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
 import Image from 'next/image';
-import { ParallaxConfig } from '@/types';
 
 interface ParallaxLayerProps {
-  src: string;
-  alt: string;
-  parallaxConfig?: ParallaxConfig;
-  priority?: boolean;
+  imagePath: string;
+  imageAlt: string;
+  depth?: number;
+  movementType?: 'scroll' | 'cursor' | 'camera-zoom';
+  children?: React.ReactNode;
 }
 
 export function ParallaxLayer({
-  src,
-  alt,
-  parallaxConfig,
-  priority = false,
+  imagePath,
+  imageAlt,
+  depth = 0.3,
+  movementType = 'scroll',
+  children,
 }: ParallaxLayerProps) {
-  const [scrollY, setScrollY] = useState(0);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-  }, []);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  });
 
-  useEffect(() => {
-    if (!parallaxConfig?.enabled || prefersReducedMotion) return;
-
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [parallaxConfig?.enabled, prefersReducedMotion]);
-
-  const isEnabled = parallaxConfig?.enabled && !prefersReducedMotion;
-  const depth = parallaxConfig?.layerDepth || 0.3;
-
-  // Calculate transform based on movement type
-  let transform = 'translateZ(0)';
-
-  if (isEnabled) {
-    switch (parallaxConfig?.movementType) {
-      case 'scroll':
-        // Parallax scroll effect
-        transform = `translateY(${scrollY * depth * 0.5}px)`;
-        break;
-      case 'camera-zoom':
-        // Gentle zoom in/out
-        const zoomScale = 1 + (scrollY * depth * 0.0002);
-        transform = `scale(${Math.max(1, zoomScale)})`;
-        break;
-      case 'camera-pan':
-        // Gentle horizontal pan
-        const panX = (scrollY * depth * 0.1) % 50;
-        transform = `translateX(${panX}px)`;
-        break;
-      default:
-        transform = 'translateZ(0)';
-    }
-  }
+  const yScroll = useTransform(scrollYProgress, [0, 1], [-20 * depth, 20 * depth]);
 
   return (
-    <motion.div// Replace aspect-[9/16] with explicit max-height limits for both mobile and desktop:
-className="relative w-full max-h-[45vh] md:max-h-[85vh] aspect-[9/16] md:aspect-auto object-contain mx-auto"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      style={{
-        transform,
-        transformOrigin: 'center center',
-      }}
+    <div
+      ref={containerRef}
+      className="relative w-full max-w-4xl mx-auto flex flex-col items-center justify-center gap-6 p-4 overflow-hidden z-10"
     >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        priority={priority}
-        quality={85}
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 90vw, 900px"
-      />
-    </motion.div>
+      {/* Constrained Image Frame */}
+      <motion.div
+        className="relative w-full max-w-md h-[30vh] md:h-[45vh] rounded-xl overflow-hidden shadow-2xl border border-amber-500/20"
+        style={{
+          y: movementType === 'scroll' ? yScroll : 0,
+        }}
+      >
+        <Image
+          src={imagePath}
+          alt={imageAlt}
+          fill
+          priority
+          sizes="(max-width: 768px) 90vw, 40vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+      </motion.div>
+
+      {/* Text Container */}
+      <div className="w-full relative z-20 text-center space-y-4">
+        {children}
+      </div>
+    </div>
   );
 }
