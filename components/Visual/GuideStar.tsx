@@ -1,9 +1,11 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
+
+export type GuideStarEffect = 'glow' | 'pulse' | 'breathing' | 'fading' | 'none';
 
 interface GuideStarProps {
-  effect?: 'glow' | 'pulse' | 'fading' | 'none';
+  effect?: GuideStarEffect;
   position?: { x: number; y: number };
   scale?: number;
   opacity?: number;
@@ -22,7 +24,7 @@ export function GuideStar({
 }: GuideStarProps) {
   if (!show) return null;
 
-  const starVariants = {
+  const starVariants: Variants = {
     glow: {
       scale: [scale, scale * 1.15, scale],
       opacity: [opacity * 0.8, opacity, opacity * 0.8],
@@ -34,7 +36,7 @@ export function GuideStar({
       transition: {
         duration,
         repeat: Infinity,
-        ease: 'easeInOut',
+        ease: 'easeInOut' as const,
       },
     },
     pulse: {
@@ -48,7 +50,21 @@ export function GuideStar({
       transition: {
         duration: duration * 0.75,
         repeat: Infinity,
-        ease: 'easeInOut',
+        ease: 'easeInOut' as const,
+      },
+    },
+    breathing: {
+      scale: [scale * 0.95, scale * 1.1, scale * 0.95],
+      opacity: [opacity * 0.6, opacity * 0.9, opacity * 0.6],
+      filter: [
+        'drop-shadow(0 0 10px rgba(253, 224, 71, 0.5))',
+        'drop-shadow(0 0 18px rgba(253, 224, 71, 0.8))',
+        'drop-shadow(0 0 10px rgba(253, 224, 71, 0.5))',
+      ],
+      transition: {
+        duration: duration * 1.2,
+        repeat: Infinity,
+        ease: 'easeInOut' as const,
       },
     },
     fading: {
@@ -56,7 +72,7 @@ export function GuideStar({
       opacity: [opacity, 0],
       transition: {
         duration: 1.5,
-        ease: 'easeOut',
+        ease: 'easeOut' as const,
       },
     },
     none: {
