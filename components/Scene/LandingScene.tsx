@@ -164,7 +164,7 @@ export function LandingScene() {
       </div>
 
       {/* Gradient Vignette */}
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-slate-950/30" />
+      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-slate-950/30" />
     </motion.div>
   );
 }
