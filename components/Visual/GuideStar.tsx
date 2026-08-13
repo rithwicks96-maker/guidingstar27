@@ -11,6 +11,7 @@ interface GuideStarProps {
   opacity?: number;
   duration?: number;
   show?: boolean;
+  particleIntensity?: number; // Added to fix TS2322 build error
 }
 
 export function GuideStar({
@@ -20,6 +21,7 @@ export function GuideStar({
   opacity = 1,
   duration = 4,
   show = true,
+  particleIntensity = 1,
 }: GuideStarProps) {
   if (!show) return null;
 
@@ -35,7 +37,7 @@ export function GuideStar({
       transition: {
         duration,
         repeat: Infinity,
-        ease: 'easeInOut' as const,
+        ease: 'easeInOut',
       },
     },
     pulse: {
@@ -44,12 +46,12 @@ export function GuideStar({
       filter: [
         'drop-shadow(0 0 10px rgba(251, 191, 36, 0.7))',
         'drop-shadow(0 0 20px rgba(251, 191, 36, 1))',
-        'drop-shadow(0 0 10px rgba(251, 191, 36, 0.7))',
+        'drop-shadow(0 0 20px rgba(251, 191, 36, 1))',
       ],
       transition: {
         duration: duration * 0.75,
         repeat: Infinity,
-        ease: 'easeInOut' as const,
+        ease: 'easeInOut',
       },
     },
     breathing: {
@@ -63,7 +65,7 @@ export function GuideStar({
       transition: {
         duration: duration * 1.2,
         repeat: Infinity,
-        ease: 'easeInOut' as const,
+        ease: 'easeInOut',
       },
     },
     fading: {
@@ -71,7 +73,7 @@ export function GuideStar({
       opacity: [opacity, 0],
       transition: {
         duration: 1.5,
-        ease: 'easeOut' as const,
+        ease: 'easeOut',
       },
     },
     none: {
