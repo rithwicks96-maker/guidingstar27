@@ -21,7 +21,6 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
   const duration = prefersReducedMotion ? 0 : 0.8;
   const animationType = block.animation || 'fade';
 
-  // State definitions that explicitly lock opacity at 1
   const getInitialState = () => {
     switch (animationType) {
       case 'slide':
@@ -35,15 +34,10 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
     }
   };
 
-  const getAnimateState = () => ({
-    opacity: 1,
-    y: 0,
-  });
-
   const transitionConfig = {
     duration: animationType === 'none' ? 0 : duration,
     delay: baseDelay,
-    ease: 'easeOut' as const,
+    ease: 'easeOut',
   };
 
   if (block.type === 'title') {
@@ -51,36 +45,20 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
       <motion.h2
         className="text-2xl md:text-3xl font-serif font-bold mt-6 mb-4 text-amber-100 relative z-20"
         initial={getInitialState()}
-        animate={getAnimateState()}
+        animate={{ opacity: 1, y: 0 }}
         transition={transitionConfig}
-        style={{ opacity: 1 }}
       >
         {block.content}
       </motion.h2>
     );
   }
 
-  if (block.type === 'body') {
-    return (
-      <motion.p
-        className="text-base md:text-xl leading-relaxed font-light text-gray-100 relative z-20 my-3"
-        initial={getInitialState()}
-        animate={getAnimateState()}
-        transition={transitionConfig}
-        style={{ opacity: 1 }}
-      >
-        {block.content}
-      </motion.p>
-    );
-  }
-
   return (
     <motion.p
-      className="text-base md:text-lg leading-relaxed font-light text-gray-100 relative z-20 my-2"
+      className="text-base md:text-xl leading-relaxed font-light text-gray-100 relative z-20 my-3"
       initial={getInitialState()}
-      animate={getAnimateState()}
+      animate={{ opacity: 1, y: 0 }}
       transition={transitionConfig}
-      style={{ opacity: 1 }}
     >
       {block.content}
     </motion.p>
