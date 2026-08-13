@@ -21,7 +21,6 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
   const duration = prefersReducedMotion ? 0 : 0.8;
   const animationType = block.animation || 'fade';
 
-  // Standardized Framer Motion Variants
   const variants = {
     fade: {
       initial: { opacity: 0 },
@@ -46,10 +45,11 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
   };
 
   const selectedVariant = variants[animationType as keyof typeof variants] || variants.fade;
+  
   const transitionConfig = {
     duration: animationType === 'none' ? 0 : animationType === 'typewriter' ? 0.5 : duration,
     delay: baseDelay,
-    ease: 'easeOut',
+    ease: 'easeOut' as const,
   };
 
   if (block.type === 'title') {
@@ -78,7 +78,6 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
     );
   }
 
-  // Default paragraph / fallback block
   return (
     <motion.p
       className="text-base md:text-lg leading-relaxed font-light text-gray-100 relative z-20 my-2"
