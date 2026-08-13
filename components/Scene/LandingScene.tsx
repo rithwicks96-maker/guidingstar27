@@ -25,7 +25,7 @@ export function LandingScene() {
 
   return (
     <motion.div
-      className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex flex-col items-center justify-center relative overflow-hidden"
+      className="isolate w-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex flex-col items-center justify-center relative overflow-hidden" 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
