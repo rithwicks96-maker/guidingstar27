@@ -21,33 +21,27 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
   const duration = prefersReducedMotion ? 0 : 0.8;
   const animationType = block.animation || 'fade';
 
-  const variants = {
-    fade: {
-      initial: { opacity: 0 },
-      animate: { opacity: 1 },
-    },
-    slide: {
-      initial: { opacity: 0, y: 20 },
-      animate: { opacity: 1, y: 0 },
-    },
-    typewriter: {
-      initial: { opacity: 0 },
-      animate: { opacity: 1 },
-    },
-    stagger: {
-      initial: { opacity: 0, y: 10 },
-      animate: { opacity: 1, y: 0 },
-    },
-    none: {
-      initial: { opacity: 1 },
-      animate: { opacity: 1 },
-    },
+  // State definitions that explicitly lock opacity at 1
+  const getInitialState = () => {
+    switch (animationType) {
+      case 'slide':
+        return { opacity: 0, y: 20 };
+      case 'stagger':
+        return { opacity: 0, y: 10 };
+      case 'none':
+        return { opacity: 1, y: 0 };
+      default:
+        return { opacity: 0, y: 0 };
+    }
   };
 
-  const selectedVariant = variants[animationType as keyof typeof variants] || variants.fade;
-  
+  const getAnimateState = () => ({
+    opacity: 1,
+    y: 0,
+  });
+
   const transitionConfig = {
-    duration: animationType === 'none' ? 0 : animationType === 'typewriter' ? 0.5 : duration,
+    duration: animationType === 'none' ? 0 : duration,
     delay: baseDelay,
     ease: 'easeOut' as const,
   };
@@ -55,10 +49,11 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
   if (block.type === 'title') {
     return (
       <motion.h2
-        className="text-2xl md:text-3xl font-serif font-bold mt-10 mb-4 text-amber-100 relative z-20"
-        initial={selectedVariant.initial}
-        animate={selectedVariant.animate}
+        className="text-2xl md:text-3xl font-serif font-bold mt-6 mb-4 text-amber-100 relative z-20"
+        initial={getInitialState()}
+        animate={getAnimateState()}
         transition={transitionConfig}
+        style={{ opacity: 1 }}
       >
         {block.content}
       </motion.h2>
@@ -68,10 +63,11 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
   if (block.type === 'body') {
     return (
       <motion.p
-        className="text-lg md:text-xl leading-relaxed font-light text-gray-100 relative z-20 my-3"
-        initial={selectedVariant.initial}
-        animate={selectedVariant.animate}
+        className="text-base md:text-xl leading-relaxed font-light text-gray-100 relative z-20 my-3"
+        initial={getInitialState()}
+        animate={getAnimateState()}
         transition={transitionConfig}
+        style={{ opacity: 1 }}
       >
         {block.content}
       </motion.p>
@@ -81,9 +77,10 @@ export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
   return (
     <motion.p
       className="text-base md:text-lg leading-relaxed font-light text-gray-100 relative z-20 my-2"
-      initial={selectedVariant.initial}
-      animate={selectedVariant.animate}
+      initial={getInitialState()}
+      animate={getAnimateState()}
       transition={transitionConfig}
+      style={{ opacity: 1 }}
     >
       {block.content}
     </motion.p>
