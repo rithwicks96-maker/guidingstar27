@@ -10,7 +10,6 @@ interface ParallaxLayerProps {
   imageAlt?: string;
   alt?: string;
   depth?: number;
-  // Using any to accept any shape of ParallaxConfig passed from scene files
   parallaxConfig?: any;
   priority?: boolean;
   movementType?: 'scroll' | 'cursor' | 'camera-zoom';
@@ -31,7 +30,7 @@ export function ParallaxLayer({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const finalSrc = imagePath || src || '';
-  const finalAlt = imageAlt || alt || 'Chapter illustration';
+  const finalAlt = imageAlt || alt || 'Background Illustration';
   const finalDepth = parallaxConfig?.speed ?? depth;
 
   const { scrollYProgress } = useScroll({
@@ -39,20 +38,17 @@ export function ParallaxLayer({
     offset: ['start end', 'end start'],
   });
 
-  const yScroll = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [-20 * finalDepth, 20 * finalDepth]
-  );
+  const yScroll = useTransform(scrollYProgress, [0, 1], [-30 * finalDepth, 30 * finalDepth]);
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-4xl mx-auto flex flex-col items-center justify-center gap-6 p-4 overflow-hidden z-10"
+      className="relative w-full h-screen min-h-[600px] flex items-center justify-center overflow-hidden z-10"
     >
+      {/* Full-Screen Background Image */}
       {finalSrc && (
         <motion.div
-          className="relative w-full max-w-md h-[30vh] md:h-[45vh] rounded-xl overflow-hidden shadow-2xl border border-amber-500/20"
+          className="absolute inset-0 z-0 w-full h-full"
           style={{
             y: movementType === 'scroll' ? yScroll : 0,
           }}
@@ -62,14 +58,16 @@ export function ParallaxLayer({
             alt={finalAlt}
             fill
             priority={priority}
-            sizes="(max-width: 768px) 90vw, 40vw"
-            className="object-cover object-center"
+            sizes="100vw"
+            className="object-cover object-center opacity-40 mix-blend-luminosity"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+          {/* Dark gradient overlay so text is 100% readable */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/40 pointer-events-none z-10" />
         </motion.div>
       )}
 
-      <div className="w-full relative z-20 text-center space-y-4">
+      {/* Floating Text Content Layer */}
+      <div className="relative z-20 flex flex-col items-center justify-center h-full max-w-2xl px-6 text-center space-y-6 pt-12">
         {children}
       </div>
     </div>
