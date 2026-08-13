@@ -79,7 +79,7 @@ export function LandingScene() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-20 max-w-2xl px-6 text-center space-y-8">
+      <div className="relative z-50 max-w-2xl px-6 text-center space-y-8">
         {/* Passage of Time Display */}
         <motion.div
           className="space-y-3 py-8"
