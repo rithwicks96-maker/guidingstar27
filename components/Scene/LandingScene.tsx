@@ -24,12 +24,7 @@ export function LandingScene() {
   ];
 
   return (
-    <motion.div
-      className="isolate w-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex flex-col items-center justify-center relative overflow-hidden" 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-    >
+      <div className="isolate w-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex flex-col items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none">
   <Image
     src="/images/1_cover.png"
@@ -165,6 +160,6 @@ export function LandingScene() {
 
       {/* Gradient Vignette */}
       <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-slate-950/30" />
-    </motion.div>
+    </div>
   );
 }
