@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { GuideStar } from '@/components/Visual/GuideStar';
 
@@ -29,6 +30,18 @@ export function LandingScene() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
+      {/* Background Cover Image */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <Image
+          src="/images/1_cover.png"
+          alt="Cover Background"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center opacity-30 mix-blend-luminosity"
+        />
+      </div>
+
       {/* Star Trail Background Effect */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Floating particles for starfield */}
