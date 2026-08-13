@@ -65,8 +65,8 @@ export function ParallaxLayer({
   }
 
   return (
-    <motion.div
-  className="relative w-full aspect-[9/16] min-h-[400px] overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950"
+    <motion.div// Replace aspect-[9/16] with explicit max-height limits for both mobile and desktop:
+className="relative w-full max-h-[45vh] md:max-h-[85vh] aspect-[9/16] md:aspect-auto object-contain mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
