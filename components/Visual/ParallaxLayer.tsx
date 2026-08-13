@@ -3,7 +3,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import Image from 'next/image';
-import { ParallaxConfig } from '@/types';
 
 interface ParallaxLayerProps {
   imagePath?: string;
@@ -11,7 +10,8 @@ interface ParallaxLayerProps {
   imageAlt?: string;
   alt?: string;
   depth?: number;
-  parallaxConfig?: ParallaxConfig;
+  // Using any to accept any shape of ParallaxConfig passed from scene files
+  parallaxConfig?: any;
   priority?: boolean;
   movementType?: 'scroll' | 'cursor' | 'camera-zoom';
   children?: React.ReactNode;
@@ -39,7 +39,11 @@ export function ParallaxLayer({
     offset: ['start end', 'end start'],
   });
 
-  const yScroll = useTransform(scrollYProgress, [0, 1], [-20 * finalDepth, 20 * finalDepth]);
+  const yScroll = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [-20 * finalDepth, 20 * finalDepth]
+  );
 
   return (
     <div
