@@ -1,169 +1,100 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 
 interface GuideStarProps {
-  effect?: 'glow' | 'pulse' | 'breathing' | 'flying' | 'brightening' | 'fading' | 'none';
-  position?: { x: number; y: number }; // percentage 0-100
+  effect?: 'glow' | 'pulse' | 'fading' | 'none';
+  position?: { x: number; y: number };
   scale?: number;
   opacity?: number;
-  particleIntensity?: 0 | 1 | 2;
+  particleIntensity?: number;
   duration?: number;
   show?: boolean;
 }
 
 export function GuideStar({
-  effect = 'breathing',
-  position = { x: 50, y: 30 },
+  effect = 'glow',
+  position = { x: 50, y: 50 },
   scale = 1,
   opacity = 1,
-  particleIntensity = 1,
-  duration = 3,
+  duration = 4,
   show = true,
 }: GuideStarProps) {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-  }, []);
-
   if (!show) return null;
 
   const starVariants = {
-    breathing: {
-      opacity: [opacity * 0.7, opacity, opacity * 0.7],
-      scale: [scale * 0.95, scale, scale * 0.95],
+    glow: {
+      scale: [scale, scale * 1.15, scale],
+      opacity: [opacity * 0.8, opacity, opacity * 0.8],
+      filter: [
+        'drop-shadow(0 0 8px rgba(253, 224, 71, 0.6))',
+        'drop-shadow(0 0 20px rgba(253, 224, 71, 0.95))',
+        'drop-shadow(0 0 8px rgba(253, 224, 71, 0.6))',
+      ],
+      transition: {
+        duration,
+        repeat: Infinity,
+        ease: 'easeInOut',
+      },
     },
     pulse: {
-      opacity: [opacity, opacity * 0.5, opacity],
-      scale: [scale, scale * 1.1, scale],
-    },
-    glow: {
-      boxShadow: [
-        `0 0 20px rgba(212, 175, 55, ${opacity * 0.5})`,
-        `0 0 40px rgba(212, 175, 55, ${opacity})`,
-        `0 0 20px rgba(212, 175, 55, ${opacity * 0.5})`,
+      scale: [scale * 0.9, scale * 1.2, scale * 0.9],
+      opacity: [opacity * 0.7, opacity, opacity * 0.7],
+      filter: [
+        'drop-shadow(0 0 12px rgba(251, 191, 36, 0.7))',
+        'drop-shadow(0 0 24px rgba(251, 191, 36, 1))',
+        'drop-shadow(0 0 12px rgba(251, 191, 36, 0.7))',
       ],
-    },
-    brightening: {
-      opacity: [opacity * 0.5, opacity],
+      transition: {
+        duration: duration * 0.75,
+        repeat: Infinity,
+        ease: 'easeInOut',
+      },
     },
     fading: {
-      opacity: [opacity, opacity * 0.5, 0],
-    },
-    flying: {
-      y: [0, -10, 0],
-      opacity: [opacity, opacity, opacity],
+      scale: [scale, scale * 0.5],
+      opacity: [opacity, 0],
+      transition: {
+        duration: 1.5,
+        ease: 'easeOut',
+      },
     },
     none: {
-      opacity: [opacity],
+      scale,
+      opacity,
+      filter: 'drop-shadow(0 0 10px rgba(253, 224, 71, 0.7))',
     },
   };
 
-  const animationConfig =
-    effect === 'none' || prefersReducedMotion
-      ? {}
-      : {
-          animate: effect,
-          transition: {
-            duration: prefersReducedMotion ? 0 : duration,
-            repeat: effect === 'brightening' || effect === 'fading' ? 0 : Infinity,
-            repeatType: 'loop' as const,
-          },
-        };
-
   return (
     <div
-      className="fixed pointer-events-none z-40"
+      className="absolute z-30 pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
-        transform: 'translate(-50%, -50%)',
       }}
     >
-      {/* Particle halo (optional intensity) */}
-      {particleIntensity > 0 && !prefersReducedMotion && (
-        <motion.div
-          className="absolute -inset-12 pointer-events-none"
-          animate={{
-            opacity: [0.3, 0.6, 0.3],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            repeatType: 'loop',
-          }}
-        >
-          {Array.from({ length: particleIntensity === 1 ? 3 : 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-amber-300 rounded-full"
-              style={{
-                left: `${Math.cos((i / (particleIntensity === 1 ? 3 : 6)) * Math.PI * 2) * 20}px`,
-                top: `${Math.sin((i / (particleIntensity === 1 ? 3 : 6)) * Math.PI * 2) * 20}px`,
-                opacity: 0.6,
-              }}
-            />
-          ))}
-        </motion.div>
-      )}
-
-      {/* Main Star */}
       <motion.div
-        className="relative"
-        variants={effect === 'none' ? {} : starVariants}
-        animate={effect === 'none' ? {} : effect}
-        transition={{
-          duration: prefersReducedMotion ? 0 : duration,
-          repeat: effect === 'brightening' || effect === 'fading' ? 0 : Infinity,
-          repeatType: 'loop',
-          ease: 'easeInOut',
-        }}
+        variants={starVariants}
+        animate={effect}
+        initial={{ scale: 0, opacity: 0 }}
+        className="relative flex items-center justify-center"
       >
-        {/* Star SVG */}
-        <svg width="60" height="60" viewBox="0 0 60 60" className="drop-shadow-lg">
-          <defs>
-           <filter id="starGlowGuidingStar">
-              <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-          <polygon
-            points="30,5 37,23 56,23 41,34 47,52 30,41 13,52 19,34 4,23 23,23"
-            fill="#d4af37"
-            filter="url(#starGlowGuidingStar)"
-            opacity={opacity}
+        <svg
+          width={40 * scale}
+          height={40 * scale}
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="text-amber-300"
+        >
+          <path
+            d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"
+            fill="currentColor"
+            stroke="rgba(254, 243, 199, 0.8)"
+            strokeWidth="0.5"
           />
         </svg>
-
-        {/* Extra glow layer for certain effects */}
-        {(effect === 'glow' || effect === 'pulse') && !prefersReducedMotion && (
-          <motion.div
-            className="absolute inset-0 rounded-full pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 70%)',
-              width: '80px',
-              height: '80px',
-              left: '-10px',
-              top: '-10px',
-            }}
-            animate={{
-              opacity: [0.4, 0.8, 0.4],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: duration,
-              repeat: Infinity,
-              repeatType: 'loop',
-            }}
-          />
-        )}
       </motion.div>
     </div>
   );
