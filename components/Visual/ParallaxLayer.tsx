@@ -3,20 +3,16 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import Image from 'next/image';
-
-interface ParallaxConfig {
-  speed?: number;
-  direction?: 'up' | 'down';
-}
+import { ParallaxConfig } from '@/types';
 
 interface ParallaxLayerProps {
   imagePath?: string;
-  src?: string; // Added to fix TS2322 build error
+  src?: string;
   imageAlt?: string;
-  alt?: string; // Added to fix TS2322 build error
+  alt?: string;
   depth?: number;
-  parallaxConfig?: ParallaxConfig; // Added to fix TS2322 build error
-  priority?: boolean; // Added to fix TS2322 build error
+  parallaxConfig?: ParallaxConfig;
+  priority?: boolean;
   movementType?: 'scroll' | 'cursor' | 'camera-zoom';
   children?: React.ReactNode;
 }
@@ -34,7 +30,6 @@ export function ParallaxLayer({
 }: ParallaxLayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fallbacks to handle both prop naming conventions
   const finalSrc = imagePath || src || '';
   const finalAlt = imageAlt || alt || 'Chapter illustration';
   const finalDepth = parallaxConfig?.speed ?? depth;
