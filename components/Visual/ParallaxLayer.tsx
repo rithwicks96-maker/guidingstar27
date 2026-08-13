@@ -1,89 +1,79 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
 import Image from 'next/image';
-import { ParallaxConfig } from '@/types';
 
 interface ParallaxLayerProps {
-  src: string;
-  alt: string;
-  parallaxConfig?: ParallaxConfig;
+  imagePath?: string;
+  src?: string;
+  imageAlt?: string;
+  alt?: string;
+  depth?: number;
+  parallaxConfig?: any;
   priority?: boolean;
+  movementType?: 'scroll' | 'cursor' | 'camera-zoom';
+  children?: React.ReactNode;
 }
 
 export function ParallaxLayer({
+  imagePath,
   src,
+  imageAlt,
   alt,
+  depth = 0.3,
   parallaxConfig,
-  priority = false,
+  priority = true,
+  movementType = 'scroll',
+  children,
 }: ParallaxLayerProps) {
-  const [scrollY, setScrollY] = useState(0);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-  }, []);
+  const finalSrc = imagePath || src || '';
+  const finalAlt = imageAlt || alt || 'Chapter illustration';
+  const finalDepth = parallaxConfig?.speed ?? depth;
 
-  useEffect(() => {
-    if (!parallaxConfig?.enabled || prefersReducedMotion) return;
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  });
 
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [parallaxConfig?.enabled, prefersReducedMotion]);
-
-  const isEnabled = parallaxConfig?.enabled && !prefersReducedMotion;
-  const depth = parallaxConfig?.layerDepth || 0.3;
-
-  // Calculate transform based on movement type
-  let transform = 'translateZ(0)';
-
-  if (isEnabled) {
-    switch (parallaxConfig?.movementType) {
-      case 'scroll':
-        // Parallax scroll effect
-        transform = `translateY(${scrollY * depth * 0.5}px)`;
-        break;
-      case 'camera-zoom':
-        // Gentle zoom in/out
-        const zoomScale = 1 + (scrollY * depth * 0.0002);
-        transform = `scale(${Math.max(1, zoomScale)})`;
-        break;
-      case 'camera-pan':
-        // Gentle horizontal pan
-        const panX = (scrollY * depth * 0.1) % 50;
-        transform = `translateX(${panX}px)`;
-        break;
-      default:
-        transform = 'translateZ(0)';
-    }
-  }
+  const yScroll = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [-20 * finalDepth, 20 * finalDepth]
+  );
 
   return (
-    <motion.div
-      className="relative w-full aspect-[9/16] overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      style={{
-        transform,
-        transformOrigin: 'center center',
-      }}
+    <div
+      ref={containerRef}
+      className="relative w-full max-w-4xl mx-auto flex flex-col items-center justify-center gap-6 p-4 overflow-hidden z-10 min-h-screen"
     >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        priority={priority}
-        quality={85}
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 90vw, 900px"
-      />
-    </motion.div>
+      {finalSrc && (
+        <motion.div
+          className="relative w-full max-w-md h-[35vh] md:h-[45vh] rounded-xl overflow-hidden shadow-2xl border border-amber-500/20"
+          style={{
+            y: movementType === 'scroll' ? yScroll : 0,
+          }}
+        >
+          <Image
+            src={finalSrc}
+            alt={finalAlt}
+            fill
+            priority={priority}
+            sizes="(max-width: 768px) 90vw, 40vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+        </motion.div>
+      )}
+
+      <div className="w-full relative z-20 text-center space-y-4 max-w-2xl px-4">
+        {children}
+      </div>
+    </div>
   );
 }
+
+// Also adding default export so both import styles work
+export default ParallaxLayer;
