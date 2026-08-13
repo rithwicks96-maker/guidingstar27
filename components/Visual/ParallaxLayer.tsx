@@ -1,78 +1,66 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { TextBlock } from '@/types';
 
-interface ParallaxLayerProps {
-  imagePath?: string;
-  src?: string;
-  imageAlt?: string;
-  alt?: string;
-  depth?: number;
-  parallaxConfig?: any;
-  priority?: boolean;
-  movementType?: 'scroll' | 'cursor' | 'camera-zoom';
-  children?: React.ReactNode;
+interface AnimatedTextBlockProps {
+  block: TextBlock;
+  index: number;
 }
 
-export function ParallaxLayer({
-  imagePath,
-  src,
-  imageAlt,
-  alt,
-  depth = 0.3,
-  parallaxConfig,
-  priority = true,
-  movementType = 'scroll',
-  children,
-}: ParallaxLayerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+export function AnimatedTextBlock({ block, index }: AnimatedTextBlockProps) {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  const finalSrc = imagePath || src || '';
-  const finalAlt = imageAlt || alt || 'Chapter illustration';
-  const finalDepth = parallaxConfig?.speed ?? depth;
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+  }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end start'],
-  });
+  const baseDelay = prefersReducedMotion ? 0 : (block.delay || index * 100) / 1000;
+  const duration = prefersReducedMotion ? 0 : 0.8;
+  const animationType = block.animation || 'fade';
 
-  const yScroll = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [-20 * finalDepth, 20 * finalDepth]
-  );
+  const getInitialState = () => {
+    switch (animationType) {
+      case 'slide':
+        return { opacity: 0, y: 20 };
+      case 'stagger':
+        return { opacity: 0, y: 10 };
+      case 'none':
+        return { opacity: 1, y: 0 };
+      default:
+        return { opacity: 0, y: 0 };
+    }
+  };
+
+  const transitionConfig = {
+    duration: animationType === 'none' ? 0 : duration,
+    delay: baseDelay,
+    ease: 'easeOut' as const, // Fixed TS error by adding 'as const'
+  };
+
+  if (block.type === 'title') {
+    return (
+      <motion.h2
+        className="text-2xl md:text-3xl font-serif font-bold mt-6 mb-4 text-amber-100 relative z-20"
+        initial={getInitialState()}
+        animate={{ opacity: 1, y: 0 }}
+        transition={transitionConfig}
+      >
+        {block.content}
+      </motion.h2>
+    );
+  }
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full max-w-4xl mx-auto flex flex-col items-center justify-center gap-6 p-4 overflow-hidden z-10 min-h-screen"
+    <motion.p
+      className="text-base md:text-xl leading-relaxed font-light text-gray-100 relative z-20 my-3"
+      initial={getInitialState()}
+      animate={{ opacity: 1, y: 0 }}
+      transition={transitionConfig}
     >
-      {/* Constrained Framed Illustration Container */}
-      {finalSrc && (
-        <motion.div
-          className="relative w-full max-w-md h-[35vh] md:h-[45vh] rounded-xl overflow-hidden shadow-2xl border border-amber-500/20"
-          style={{
-            y: movementType === 'scroll' ? yScroll : 0,
-          }}
-        >
-          <Image
-            src={finalSrc}
-            alt={finalAlt}
-            fill
-            priority={priority}
-            sizes="(max-width: 768px) 90vw, 40vw"
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-        </motion.div>
-      )}
-
-      {/* Text Container Below Image */}
-      <div className="w-full relative z-20 text-center space-y-4 max-w-2xl px-4">
-        {children}
-      </div>
-    </div>
+      {block.content}
+    </motion.p>
   );
 }
